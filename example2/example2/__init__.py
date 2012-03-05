@@ -12,7 +12,7 @@ import redis
 def simple_route(config, name, url, fn):
     config.add_route(name, url)
     config.add_view(fn, route_name=name,
-            renderer="__main__:templates/%s.mako" % name)
+            renderer="example2:templates/%s.mako" % name)
 
 def index(request):
     return {}
@@ -40,14 +40,7 @@ def socketio_service(request):
     retval = socketio_manage(ConnectIOContext(request))
     return Response(retval)
 
-if __name__ == '__main__':
-    if len(sys.argv) < 1:
-        port = int(sys.argv[1])
-    else:
-        port = 6543
-
-    from gevent import monkey; monkey.patch_all()
-
+def main(global_config, **settings):
     config = Configurator()
 
     simple_route(config, 'index', '/', index)
@@ -57,5 +50,4 @@ if __name__ == '__main__':
 
     app = config.make_wsgi_app()
 
-    print("Listening on http://127.0.0.1:%s" % port)
-    SocketIOServer(('127.0.0.1', port), app, namespace="socket.io", policy_server=False).serve_forever()
+    return app
