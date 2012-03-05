@@ -49,22 +49,22 @@ def socketio_service2(request):
     return Response(retval)
 
 if __name__ == '__main__':
-    if len(sys.argv) < 2:
-        print("Please pass the port number ./app.py <port>")
+    if len(sys.argv) < 1:
+        port = int(sys.argv[1])
     else:
-        from gevent import monkey; monkey.patch_all()
+        port = 6543
 
-        config = Configurator()
+    from gevent import monkey; monkey.patch_all()
 
-        simple_route(config, 'index', '/', index)
-        #simple_route(config, 'socket_io', 'socket.io/*remaining', socketio_service)
-        simple_route(config, 'socket_io', 'socket.io/*remaining', socketio_service2)
+    config = Configurator()
 
-        config.add_static_view('static', 'static', cache_max_age=3600)
+    simple_route(config, 'index', '/', index)
+    #simple_route(config, 'socket_io', 'socket.io/*remaining', socketio_service)
+    simple_route(config, 'socket_io', 'socket.io/*remaining', socketio_service2)
 
-        app = config.make_wsgi_app()
+    config.add_static_view('static', 'static', cache_max_age=3600)
 
-        port = sys.argv[1]
+    app = config.make_wsgi_app()
 
-        print("Listening on http://127.0.0.1:" + port)
-        SocketIOServer(('127.0.0.1', int(port)), app, namespace="socket.io", policy_server=False).serve_forever()
+    print("Listening on http://127.0.0.1:%s" % port)
+    SocketIOServer(('127.0.0.1', port), app, namespace="socket.io", policy_server=False).serve_forever()
