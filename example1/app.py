@@ -3,8 +3,6 @@ import sys
 
 from pyramid.config import Configurator
 from socketio import SocketIOServer
-from pyramid.response import Response
-from pyramid_socketio.io import SocketIOContext, socketio_manage
 
 def simple_route(config, name, url, fn):
     config.add_route(name, url)
@@ -31,23 +29,6 @@ def socketio_service(request):
 
     return {}
 
-class ConnectIOContext(SocketIOContext):
-    def connect(self):
-        print 'CONNECTED!!'
-
-    def disconnect(self):
-        print 'disconnected!!'
-
-    def event_chat(self, msg):
-        print "MESSAGE!!!", msg
-        self.broadcast_event("chat", msg)
-
-def socketio_service2(request):
-    print "Socket.IO request running"
-    ctx = ConnectIOContext(request)
-    retval = socketio_manage(ctx)
-    return Response(retval)
-
 if __name__ == '__main__':
     if len(sys.argv) < 1:
         port = int(sys.argv[1])
@@ -59,8 +40,7 @@ if __name__ == '__main__':
     config = Configurator()
 
     simple_route(config, 'index', '/', index)
-    #simple_route(config, 'socket_io', 'socket.io/*remaining', socketio_service)
-    simple_route(config, 'socket_io', 'socket.io/*remaining', socketio_service2)
+    simple_route(config, 'socket_io', 'socket.io/*remaining', socketio_service)
 
     config.add_static_view('static', 'static', cache_max_age=3600)
 
