@@ -1,0 +1,5 @@
+pyramid
+gevent
+gevent-socketio
+redis
+pyramid_socketio
