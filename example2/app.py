@@ -3,6 +3,8 @@ import sys
 
 from pyramid.config import Configurator
 from socketio import SocketIOServer
+from pyramid.response import Response
+from pyramid_socketio.io import SocketIOContext, socketio_manage
 
 def simple_route(config, name, url, fn):
     config.add_route(name, url)
@@ -12,22 +14,14 @@ def simple_route(config, name, url, fn):
 def index(request):
     return {}
 
+class ConnectIOContext(SocketIOContext):
+    def event_chat(self, msg):
+        self.broadcast_event('chat', msg)
+
 def socketio_service(request):
-    socketio = request.environ["socketio"]
-    socketio.start_heartbeat()
-
-    while True:
-        message = socketio.receive()
-
-        if message:
-            print message["type"]
-            if message["type"] == "message":
-                socketio.broadcast_event("custom event", "omgz")
-            elif message["type"] == "event":
-                if message['name'] == "chat":
-                    socketio.broadcast_event('chat', ''.join(message['args']))
-
-    return {}
+    print "Socket.IO request running"
+    retval = socketio_manage(ConnectIOContext(request))
+    return Response(retval)
 
 if __name__ == '__main__':
     if len(sys.argv) < 1:
