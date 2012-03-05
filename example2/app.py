@@ -2,9 +2,12 @@
 import sys
 
 from pyramid.config import Configurator
-from socketio import SocketIOServer
 from pyramid.response import Response
 from pyramid_socketio.io import SocketIOContext, socketio_manage
+
+from socketio import SocketIOServer
+
+import redis
 
 def simple_route(config, name, url, fn):
     config.add_route(name, url)
@@ -15,11 +18,25 @@ def index(request):
     return {}
 
 class ConnectIOContext(SocketIOContext):
+    def listener(self):
+        r = redis.Redis()
+        r.subscribe('chat')
+
+        for m in r.listen():
+            if not self.io.session.connected:
+                return
+
+            if m['type'] == 'message':
+                self.io.send_event("chat", m['data'])
+
+    def connect(self):
+        self.spawn(self.listener)
+
     def event_chat(self, msg):
-        self.broadcast_event('chat', msg)
+        r = redis.Redis()
+        r.publish('chat', msg[0])
 
 def socketio_service(request):
-    print "Socket.IO request running"
     retval = socketio_manage(ConnectIOContext(request))
     return Response(retval)
 

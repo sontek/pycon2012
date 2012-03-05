@@ -21,9 +21,6 @@ $(document).ready(function() {
     $("#submit").click(function() {
         var val = $("#chatbox").val();
         socket.emit("chat", val);
-        socket.emit("HI");
-        socket.send("omgz");
-        $("#chatlog").append(val + "<br />");
         $("#chatbox").val("");
     });
 });
