@@ -29,7 +29,8 @@ def index(request):
 
 class ConnectIOContext(SocketIOContext):
     def listener(self):
-        r = redis.Redis()
+        r = redis.StrictRedis()
+        r = r.pubsub()
         r.subscribe('chat')
 
         for m in r.listen():
