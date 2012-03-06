@@ -1,0 +1,14 @@
+<h3>Chat Log</h3>
+
+<div id="chat_log">
+  {{#if collection }}
+    {{#each collection}}
+      {{ this.body }}<br />
+    {{/each}}
+  {{ else }}
+    No Log
+  {{/if}}
+</div>
+<div id="chat_message">
+  <input type="text" id="txtChat"></input><button type="submit" id="send" class="btn">Send</button>
+</div>

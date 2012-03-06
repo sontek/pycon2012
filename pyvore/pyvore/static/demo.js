@@ -1,5 +1,6 @@
 $(document).ready(function() {
     var socket = io.connect();
+//   var socket = new io.Socket(null, {});
 
     socket.on("connect", function () {
         // we are connected... nothing to do really

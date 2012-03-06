@@ -1,0 +1,14 @@
+pyramid
+pyramid_mailer
+pyramid_signup
+pyramid_deform
+pyramid_beaker
+pyramid_jinja2
+
+deform
+deform_jinja2
+webassets
+pystache
+colander
+pytz
+cryptacular

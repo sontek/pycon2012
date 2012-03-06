@@ -1,0 +1,24 @@
+body {
+  padding-top: 60px;
+  padding-bottom: 40px;
+}
+
+.sidebar-nav {
+  padding: 9px 0;
+}
+
+.nav-list li {
+  border-bottom: solid 1px #CCC;
+}
+
+.nav-header {
+  border: 0;
+}
+
+#txtChat {
+  width: 350px;
+}
+
+#send {
+  margin-bottom: 9px;
+}
