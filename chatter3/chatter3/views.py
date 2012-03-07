@@ -28,11 +28,13 @@ def socketio_service(request):
 
     # gevent-socketio puts this into the environment
     socketio = request.environ["socketio"]
+
     gevent.spawn(listener, socketio)
 
     # keep trying to get messages from the websocket
     while True:
         message = socketio.receive()
+
         if message:
             if message["type"] == "event":
                 if message['name'] == "chat":

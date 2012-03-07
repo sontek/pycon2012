@@ -3,9 +3,10 @@
     <title>Chatter!</title>
     <script src="/static/jquery.js" type="text/javascript"></script>
     <script src="/static/socket.io.js" type="text/javascript"></script>
-    <script src="/static/chatter.js" type="text/javascript"></script>
+    <script src="/static/handlebars.js" type="text/javascript"></script>
     <script src="/static/underscore.js" type="text/javascript"></script>
     <script src="/static/backbone.js" type="text/javascript"></script>
+    <script src="/static/chatter.js" type="text/javascript"></script>
     <link rel="stylesheet" type="text/css" href="/static/styles.css" />
   </head>
   <body>

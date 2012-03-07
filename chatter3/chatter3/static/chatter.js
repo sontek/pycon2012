@@ -2,18 +2,67 @@ $(document).ready(function() {
     // connect to the websocket
     var socket = io.connect();
 
-    socket.on("chat", function(e) {
-        $("#chatlog").append(e + "<br />");
+    var ChatModel = Backbone.Model.extend({
     });
 
-    // Execute whenever the form is submitted
-    $("#chat_form").submit(function(e) {
-        // don't allow the form to submit
-        e.preventDefault();
+    var ChatItem = Backbone.View.extend({
+        render: function(){
+            var template = Handlebars.compile($("#chat_item_template").html());
+            this.$el.html(template(this.model.toJSON()));
 
-        var val = $("#chatbox").val();
-
-        socket.emit("chat", val);
-        $("#chatbox").val("");
+            return this;
+        },
     });
+
+    var ChatView = Backbone.View.extend({
+        events: {
+            "submit #chat_form": "send"
+        },
+
+        send: function(evt) {
+            evt.preventDefault();
+            var val = $("#chatbox").val();
+
+            socket.emit("chat", val);
+            $("#chatbox").val("");
+        },
+
+        initialize: function() {
+            var me = this;
+
+            socket.on("chat", function(e) {
+                me.$("#chatlog").append(new ChatItem({
+                    model: new ChatModel({
+                        chat_line: e
+                    })
+                }).render().el);
+            });
+        },
+
+        render: function(){
+            var template = Handlebars.compile($("#chat_template").html());
+            $(this.el).html(template());
+        },
+
+    });
+
+    var Router = Backbone.Router.extend({
+
+        routes: {
+            "": "index"
+        },
+
+        index: function() {
+            var view = new ChatView({
+                el: $("#container"),
+            });
+
+            view.render();
+        }
+
+    });
+
+    var router = new Router();
+    Backbone.history.start({ pushState: true });
+
 });
