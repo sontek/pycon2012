@@ -218,9 +218,9 @@ var LayoutManager = Backbone.View.extend({
     view.render = function(done) {
       var viewDeferred = options.deferred();
 
-      if (!view.__manager__.isManaged) {
-        return viewDeferred.resolve(view.el);
-      }
+//      if (!view.__manager__.isManaged) {
+//        return viewDeferred.resolve(view.el);
+//      }
 
       // Break this callback out so that its not duplicated inside the 
       // following safety try/catch.

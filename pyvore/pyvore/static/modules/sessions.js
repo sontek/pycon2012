@@ -6,7 +6,11 @@
     Sessions.Models.Chat = Backbone.Model.extend({
     });
 
-    Sessions.Views.Chat = Pyvore.View.extend({
+    Sessions.Views.ChatItem = Pyvore.View.extend({
+        template: "chatitem"
+    });
+
+    Sessions.Views.ChatList = Pyvore.View.extend({
         events: {
             "click #send": "send",
             "keydown #txtChat": "check_send"
@@ -15,12 +19,16 @@
         template: "chat",
 
         render: function(manage) {
-            return manage(this).render().then(function(el) {
-                console.log("AFTER RENDER!");
-                $(el).find("#txtChat").each(function(txt) {
-                    $(txt).focus(); 
+            var me = this;
+            var view = manage(this);
+            if (this.collection != undefined) {
+                this.collection.each(function(model) {
+                    view.insert("ul", new Sessions.Views.ChatItem({
+                        model: model
+                    }));
                 });
-            });
+            }
+            return view.render();
         },
 
         serialize: function() {
@@ -47,6 +55,16 @@
             var me = this;
 
             Pyvore.View.prototype.initialize.call(this);
+
+            this.collection.on("add", function(model) {
+                var view = new Sessions.Views.ChatItem({
+                    model: model
+                })
+
+                this.view("ul", view, true).render();
+                me.$("ul").scrollTop(me.$("ul").get(0).scrollHeight);
+
+            }, this);
 
             Pyvore.socket.on("chat", function (data) {
                 me.collection.add(data)

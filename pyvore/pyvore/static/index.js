@@ -99,7 +99,7 @@ jQuery(function($) {
             
             var chatlog = new Sessions.Collections.Chat({}, id);
 
-            var chat_view = new Sessions.Views.Chat({
+            var chat_view = new Sessions.Views.ChatList({
                 collection: chatlog
             })
 

@@ -4,15 +4,9 @@
   {{/if}}
 </h3>
 
-<div id="chat_log">
-  {{#if collection }}
-    {{#each collection}}
-    <strong>{{this.user.username}}</strong>: {{ this.chat_line }}<br />
-    {{/each}}
-  {{ else }}
-    No Log
-  {{/if}}
-</div>
+<ul id="chat_log">
+</ul>
+
 <div id="chat_message">
   <input type="text" id="txtChat"></input><button type="submit" id="send" class="btn">Send</button>
 </div>

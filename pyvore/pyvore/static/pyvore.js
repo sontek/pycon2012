@@ -10,9 +10,6 @@ this.Pyvore = {
                 }
 
                 if (this.collection != undefined) {
-                    this.collection.on("add", function() {
-                        this.render();
-                    }, this);
                     this.collection.on("reset", function() {
                         this.render();
                     }, this);
