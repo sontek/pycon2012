@@ -14,6 +14,8 @@ $(document).ready(function() {
         },
     });
 
+    // a collection that will hit a RESTful webservice and pull back all
+    // results serialized as backbone models
     var ChatCollection = Backbone.Collection.extend({
         url: "/get_log"
     });
@@ -41,6 +43,7 @@ $(document).ready(function() {
                 }).render().el);
             });
 
+            // re-render the view if the collection fires a reset event
             this.collection.on("reset", function() {
                 me.render();
             });
@@ -70,6 +73,7 @@ $(document).ready(function() {
                 el: $("#container")
             });
 
+            // pull the data from the server
             collection.fetch();
 
             view.render();

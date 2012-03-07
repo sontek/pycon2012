@@ -17,7 +17,6 @@ def listener(io):
     r = redis.StrictRedis()
     r = r.pubsub()
 
-    # only subscribe to the channel we are currently in
     r.subscribe('chat')
 
     for m in r.listen():
@@ -29,21 +28,19 @@ def listener(io):
             io.send_event("chat", data)
 
 def socketio_service(request):
-    """ The view that will launch the socketio listener """
     r = redis.Redis()
 
-    # gevent-socketio puts this into the environment
     socketio = request.environ["socketio"]
 
     gevent.spawn(listener, socketio)
 
-    # keep trying to get messages from the websocket
     while True:
         message = socketio.receive()
 
         if message:
             if message["type"] == "event":
                 if message['name'] == "chat":
+                    # store the data in the database using sqlalchemy
                     chat_line = ''.join(message['args'])
                     chat = Chat(chat_line = chat_line)
                     DBSession.add(chat)
