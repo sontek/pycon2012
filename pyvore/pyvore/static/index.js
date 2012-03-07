@@ -90,6 +90,8 @@ jQuery(function($) {
         },
 
         chat: function(id) {
+            Pyvore.socket.emit("subscribe", id)
+
             var me = this;
             var layout = this.render_sessions();
 

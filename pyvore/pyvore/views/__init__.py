@@ -10,6 +10,7 @@ from json import dumps
 from json import loads
 
 import redis
+import gevent
 
 class BaseController(object):
     @property
@@ -28,10 +29,14 @@ def index(request):
     return {}
 
 class ConnectIOContext(SocketIOContext):
-    def listener(self):
+    jobs = []
+
+    def listener(self, channel):
         r = redis.StrictRedis()
         r = r.pubsub()
-        r.subscribe('chat')
+
+        # only subscribe to the channel we are currently in
+        r.subscribe('chat:' + channel)
 
         for m in r.listen():
             if not self.io.session.connected:
@@ -39,18 +44,18 @@ class ConnectIOContext(SocketIOContext):
 
             if m['type'] == 'message':
                 data = loads(m['data'])
-                self.io.send_event("chat", data[1])
+                self.io.send_event("chat", data)
 
-    def connect(self):
-        print("CONNECT!!!")
-        self.spawn(self.listener)
+    def event_subscribe(self, channel):
+        result = self.spawn(self.listener, channel[0])
+        self.jobs.append(result)
 
     def event_chat(self, msg):
         r = redis.Redis()
-        r.publish('chat', dumps(msg))
+        # only publish to the channel the message came from
+        r.publish('chat:' + msg[0], dumps(msg[1]))
 
 @view_config(route_name='socket_io')
 def socketio_service(request):
-    print("SERVICE!!!")
     retval = socketio_manage(ConnectIOContext(request))
     return Response(retval)
