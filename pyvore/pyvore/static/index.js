@@ -63,25 +63,27 @@ jQuery(function($) {
         },
 
         render_sessions: function() {
-            var me = this;
-            var layout = this.use_layout("main_layout", "#container-body");
+            if (user_name != undefined) {
+                var me = this;
+                var layout = this.use_layout("main_layout", "#container-body");
 
 
-            if (Pyvore.sessions == undefined) {
-                Pyvore.sessions = new Sessions.Collections.SessionCollection();
-                Pyvore.sessions.fetch();
+                if (Pyvore.sessions == undefined) {
+                    Pyvore.sessions = new Sessions.Collections.SessionCollection();
+                    Pyvore.sessions.fetch();
+                }
+
+
+                var session_list = new Sessions.Views.SessionList({
+                    collection: Pyvore.sessions
+                })
+
+                layout.view('#session_list', session_list);
+
+                session_list.render();
+
+                return layout;
             }
-
-
-            var session_list = new Sessions.Views.SessionList({
-                collection: Pyvore.sessions
-            })
-
-            layout.view('#session_list', session_list);
-
-            session_list.render();
-
-            return layout;
         },
 
         index: function() {
@@ -94,7 +96,7 @@ jQuery(function($) {
 
             var me = this;
             var layout = this.render_sessions();
-
+            
             var chatlog = new Sessions.Collections.Chat({}, id);
 
             var chat_view = new Sessions.Views.Chat({

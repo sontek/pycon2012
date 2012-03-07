@@ -14,7 +14,6 @@ this.Pyvore = {
                         this.render();
                     }, this);
                     this.collection.on("reset", function() {
-                        console.log("RESET!");
                         this.render();
                     }, this);
                 }

@@ -1,9 +1,13 @@
-<h3>Chat Log</h3>
+<h3>
+  {{#if session }}
+    {{ session.title }}
+  {{/if}}
+</h3>
 
 <div id="chat_log">
   {{#if collection }}
     {{#each collection}}
-      {{ this.body }}<br />
+    <strong>{{this.user.username}}</strong>: {{ this.chat_line }}<br />
     {{/each}}
   {{ else }}
     No Log

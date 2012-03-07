@@ -16,9 +16,20 @@ body {
 }
 
 #txtChat {
-  width: 350px;
+  width: 400px;
 }
+/*#chat_message {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+}
+*/
 
 #send {
   margin-bottom: 9px;
+}
+
+#chat_log {
+  height: 400px;
+  overflow-y: scroll;
 }

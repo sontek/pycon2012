@@ -7,4 +7,4 @@ class SessionManager(BaseManager):
         return self.session.query(Session).all()
 
     def get_chatlog(self, pk):
-        return self.session.query(Chat).filter(Session.pk == pk)
+        return self.session.query(Chat).filter(Chat.session_pk == pk)

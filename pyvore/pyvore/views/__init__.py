@@ -2,6 +2,8 @@ from pyramid.view import view_config
 from pyramid.response import Response
 
 from pyvore.lib import get_session
+from pyvore.models.sessions import Chat
+from pyvore.models import DBSession
 
 from pyramid_socketio.io import SocketIOContext
 from pyramid_socketio.io import socketio_manage
@@ -29,8 +31,6 @@ def index(request):
     return {}
 
 class ConnectIOContext(SocketIOContext):
-    jobs = []
-
     def listener(self, channel):
         r = redis.StrictRedis()
         r = r.pubsub()
@@ -47,13 +47,22 @@ class ConnectIOContext(SocketIOContext):
                 self.io.send_event("chat", data)
 
     def event_subscribe(self, channel):
-        result = self.spawn(self.listener, channel[0])
-        self.jobs.append(result)
+        self.spawn(self.listener, channel[0])
 
     def event_chat(self, msg):
         r = redis.Redis()
+        chat_line = msg[1]
+
+        chat = Chat(chat_line=chat_line,
+            user_pk=self.request.user.pk,
+            session_pk=int(msg[0])
+        )
+
+        DBSession.add(chat)
+        DBSession.commit()
+
         # only publish to the channel the message came from
-        r.publish('chat:' + msg[0], dumps(msg[1]))
+        r.publish('chat:' + msg[0], dumps(chat.serialize()))
 
 @view_config(route_name='socket_io')
 def socketio_service(request):

@@ -80,6 +80,12 @@
     <!-- Le javascript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
+    {% if request.user %}
+    <script type="text/javascript">
+      var user_id = {{ request.user.pk }};
+      var user_name = "{{ request.user.username }}";
+    </script>
+    {% endif %}
     {% assets filters="jsmin", output="packed.js",
       "libs/jquery.js",
       "libs/underscore.js",

@@ -8,20 +8,55 @@
 
     Sessions.Views.Chat = Pyvore.View.extend({
         events: {
-            "click #send": "send"
+            "click #send": "send",
+            "keydown #txtChat": "check_send"
         },
 
         template: "chat",
 
+        render: function(manage) {
+            return manage(this).render().then(function(el) {
+                console.log("AFTER RENDER!");
+                $(el).find("#txtChat").each(function(txt) {
+                    $(txt).focus(); 
+                });
+            });
+        },
+
+        serialize: function() {
+            var me = this;
+
+            context = Pyvore.View.prototype.serialize.call(this);
+
+            var session = '';
+
+            for(var i=0; i < Pyvore.sessions.models.length; i++) {
+                if (Pyvore.sessions.models[i].id == me.collection.pk) {
+                    session = Pyvore.sessions.models[i];
+                }
+            }
+
+            if (session != '') {
+                context['session'] = session.toJSON();
+            }
+
+            return context;
+        },
+
         initialize: function() {
             var me = this;
+
             Pyvore.View.prototype.initialize.call(this);
 
-            Pyvore.socket.on("chat", function (e) {
-                me.collection.add(new Sessions.Models.Chat({
-                    body: e
-                }));
+            Pyvore.socket.on("chat", function (data) {
+                me.collection.add(data)
             });
+        },
+
+        check_send: function(event) {
+            if (event.keyCode == 13) {
+                this.send();
+            }
         },
 
         send: function() {

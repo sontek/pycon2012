@@ -6,8 +6,6 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.types import Integer
 
-from zope.sqlalchemy import ZopeTransactionExtension
-
 from pyvore.lib import local
 
 from datetime import datetime
@@ -18,7 +16,7 @@ import re
 
 # ZopeTransactionExtension hooks up our sessions to a central transaction,
 # so that we can rollback even for exceptions that happen outside of the database
-DBSession = scoped_session(sessionmaker(extension=ZopeTransactionExtension()))
+DBSession = scoped_session(sessionmaker())
 
 class Base(object):
     """Base class which auto-generates tablename, surrogate

@@ -7,6 +7,7 @@ from sqlalchemy.orm import relation
 
 from pyramid_signup.models import User
 from pyvore.models import Entity
+from datetime import datetime
 
 class Session(Entity):
     title = Column(UnicodeText, nullable=False)
@@ -14,7 +15,7 @@ class Session(Entity):
 
 class Chat(Entity):
     chat_line = Column(UnicodeText, nullable=False)
-    start = Column(DateTime, nullable=False)
+    create_date = Column(DateTime, nullable=False, default=datetime.now)
     session_pk = Column(Integer, ForeignKey('session.pk'))
     session = relation('Session')
     user_pk = Column(Integer, ForeignKey(User.pk))
