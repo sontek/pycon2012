@@ -8,17 +8,24 @@ def index(request):
     return {}
 
 def listener(io):
+    """ Each client will spawn this listener thread to continually
+    listen for publishes from redis
+    """
     r = redis.StrictRedis()
+
+    # enable redis pubsub ( new in 2.4 )
     r = r.pubsub()
 
-    # only subscribe to the channel we are currently in
+    # subscribe to the chat channel
     r.subscribe('chat')
 
     for m in r.listen():
+        # make sure the client hasn't disconnected
         if not io.session.connected:
             return
 
         if m['type'] == 'message':
+            # load the json from redis and send it to the client
             data = loads(m['data'])
             io.send_event("chat", data)
 
@@ -29,6 +36,7 @@ def socketio_service(request):
     # gevent-socketio puts this into the environment
     socketio = request.environ["socketio"]
 
+    # spawn the redis listener for the client
     gevent.spawn(listener, socketio)
 
     # keep trying to get messages from the websocket
@@ -38,8 +46,7 @@ def socketio_service(request):
         if message:
             if message["type"] == "event":
                 if message['name'] == "chat":
-                    # we got a new chat event from the client, send it out to
-                    # all the listeners
+                    # we got a new chat event from the client, send json encoded
+                    # data to redis
                     r.publish('chat', dumps(message['args']))
     return {}
-
