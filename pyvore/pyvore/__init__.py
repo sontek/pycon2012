@@ -18,6 +18,10 @@ from pyramid_signup.interfaces import ISURegisterForm
 from pyramid_signup.interfaces import ISUForgotPasswordForm
 from pyramid_signup.interfaces import ISUResetPasswordForm
 from pyramid_signup.interfaces import ISUProfileForm
+from pyramid_signup.events import PasswordResetEvent
+from pyramid_signup.events import NewRegistrationEvent
+from pyramid_signup.events import RegistrationActivatedEvent
+from pyramid_signup.events import ProfileUpdatedEvent
 from pyramid_signup import groupfinder
 
 import os
@@ -28,6 +32,11 @@ from pyvore.forms import PyvoreForm
 from pyvore.interfaces import ISession
 
 here = os.path.dirname(__file__)
+
+def handle_request(event):
+  request = event.request
+  session = request.registry.getUtility(ISUSession)
+  session.commit()
 
 def main(global_config, **settings):
     """ This function returns a Pyramid WSGI application.
@@ -46,6 +55,11 @@ def main(global_config, **settings):
         authorization_policy=authz_policy,
         authentication_policy=authn_policy
     )
+
+    config.add_subscriber(handle_request, PasswordResetEvent)
+    config.add_subscriber(handle_request, NewRegistrationEvent)
+    config.add_subscriber(handle_request, RegistrationActivatedEvent)
+    config.add_subscriber(handle_request, ProfileUpdatedEvent)
 
     config.registry.registerUtility(DBSession, ISession)
 
