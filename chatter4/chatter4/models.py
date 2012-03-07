@@ -15,5 +15,10 @@ class Chat(Base):
     pk =  Column(Integer, primary_key=True, autoincrement=True)
     chat_line = Column(UnicodeText, nullable=False)
 
+    def serialize(self):
+        return {
+            'chat_line': self.chat_line
+        }
+
 def includeme(config):
-    config.scan('chatter3.models')
+    config.scan('chatter4.models')

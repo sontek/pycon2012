@@ -1,7 +1,9 @@
 #!/usr/bin/env python
+from sqlalchemy import engine_from_config
 from pyramid.config import Configurator
 from chatter2.views import socketio_service
 from chatter2.views import index
+from chatter2.models import DBSession
 
 def simple_route(config, name, url, fn):
     config.add_route(name, url)
@@ -10,6 +12,9 @@ def simple_route(config, name, url, fn):
 
 def main(global_config, **settings):
     config = Configurator()
+
+    engine = engine_from_config(settings, 'sqlalchemy.')
+    DBSession.configure(bind=engine)
 
     simple_route(config, 'index', '/', index)
     simple_route(config, 'socket_io', 'socket.io/*remaining', socketio_service)
