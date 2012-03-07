@@ -36,7 +36,7 @@ def main(argv=sys.argv): # pragma: no cover
         settings=settings
     )
 
-    config.include('chatter.models')
+    config.include('chatter2.models')
 
     engine = engine_from_config(settings, 'sqlalchemy.')
 

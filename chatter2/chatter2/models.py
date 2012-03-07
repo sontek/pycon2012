@@ -9,6 +9,7 @@ DBSession = scoped_session(sessionmaker())
 Base = declarative_base()
 
 class Chat(Base):
+    """ Base model for storing the chat log """
     __table_args__ = {'sqlite_autoincrement': True}
     __tablename__ = 'chat'
 
@@ -16,4 +17,5 @@ class Chat(Base):
     chat_line = Column(UnicodeText, nullable=False)
 
 def includeme(config):
+    """ Pyramid configuration """
     config.scan('chatter2.models')

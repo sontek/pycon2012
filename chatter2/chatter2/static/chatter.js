@@ -2,6 +2,7 @@ $(document).ready(function() {
     // connect to the websocket
     var socket = io.connect();
 
+    // Listen for the event "chat" and add the content to the log
     socket.on("chat", function(e) {
         $("#chatlog").append(e + "<br />");
     });
@@ -13,7 +14,9 @@ $(document).ready(function() {
 
         var val = $("#chatbox").val();
 
+        // send out the "chat" event with the textbox as the only argument
         socket.emit("chat", val);
+
         $("#chatlog").append(val + "<br />");
 
         $("#chatbox").val("");

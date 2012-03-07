@@ -11,11 +11,12 @@ def socketio_service(request):
     # keep trying to get messages from the websocket
     while True:
         message = socketio.receive()
+
         if message:
             if message["type"] == "event":
                 if message['name'] == "chat":
                     # we got a new chat event from the client, send it out to
-                    # all the listeners
+                    # all the clients except ourselves
                     socketio.broadcast_event('chat', ''.join(message['args']))
     return {}
 
