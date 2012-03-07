@@ -20,9 +20,10 @@ gevent-websocket>=0.3.1
 pycco
 
 deform
-deform_jinja2
 webassets
 pystache
 colander
 pytz
 cryptacular
+
+-e git+https://github.com/sontek/deform_jinja2.git#egg=deform_jinja2
