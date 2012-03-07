@@ -7,7 +7,7 @@ from sqlalchemy import engine_from_config
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm import scoped_session
 
-from chatter.models import Base
+from chatter2.models import Base
 
 from pyramid.paster import (
     get_appsettings,
