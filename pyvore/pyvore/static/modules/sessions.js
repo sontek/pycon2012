@@ -67,6 +67,7 @@
             }, this);
 
             Pyvore.socket.on("chat", function (data) {
+                console.log("DATA!!!", data);
                 me.collection.add(data)
             });
         },
