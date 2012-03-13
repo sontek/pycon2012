@@ -12,7 +12,12 @@ jQuery(function($) {
     Backbone.LayoutManager.configure({
         // pull templates from JST
         fetch: function(name) {
-            return window.JST[name];
+            var url = "/static/templates/" + name +".html";
+            var done = this.async();
+
+            $.get(url, function(contents) {
+                done(Handlebars.compile(contents));
+            });
         },
 
         render: function(template, context) {

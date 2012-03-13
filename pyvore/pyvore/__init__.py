@@ -63,11 +63,11 @@ def main(global_config, **settings):
 
     config.registry.registerUtility(DBSession, ISession)
 
-    jst = Bundle('templates/*.html',
-            filters='jst',
-            output='jst.js', debug=False)
-
-    config.add_webasset('jst', jst)
+#    jst = Bundle('templates/*.html',
+#            filters='jst',
+#            output='jst.js', debug=False)
+#
+#    config.add_webasset('jst', jst)
 
 
     # jinja2 configuration
