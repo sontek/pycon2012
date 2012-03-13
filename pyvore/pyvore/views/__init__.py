@@ -65,25 +65,6 @@ class ChatNamespace(BaseNamespace):
         self.spawn(self.listener, channel['id'])
 
 
-#class ConnectIOContext(SocketIOContext):
-#    def event_subscribe(self, channel):
-#        self.spawn(self.listener, channel[0])
-#
-#    def event_chat(self, msg):
-#        r = redis.Redis()
-#        chat_line = msg[1]
-#
-#        chat = Chat(chat_line=chat_line,
-#            user_pk=self.request.user.pk,
-#            session_pk=int(msg[0])
-#        )
-#
-#        DBSession.add(chat)
-#        DBSession.commit()
-#
-#        # only publish to the channel the message came from
-#        r.publish('chat:' + msg[0], dumps(chat.serialize()))
-
 @view_config(route_name='socket_io')
 def socketio_service(request):
     retval = socketio_manage(request.environ,
