@@ -1,52 +1,38 @@
 import redis
 from json import loads
 from json import dumps
-import gevent
+
+from socketio.namespace import BaseNamespace
+from socketio.io import socketio_manage
 
 def index(request):
     """ Base view to load our template """
     return {}
 
-def listener(io):
-    """ Each client will spawn this listener thread to continually
-    listen for publishes from redis
-    """
-    r = redis.StrictRedis()
+class ChatNamespace(BaseNamespace):
+    def listener(self):
+        r = redis.StrictRedis()
+        r = r.pubsub()
 
-    # enable redis pubsub ( new in 2.4 )
-    r = r.pubsub()
+        r.subscribe('chat')
 
-    # subscribe to the chat channel
-    r.subscribe('chat')
+        for m in r.listen():
+            if m['type'] == 'message':
+                data = loads(m['data'])
+                self.emit("chat", data)
 
-    for m in r.listen():
-        # make sure the client hasn't disconnected
-        if not io.session.connected:
-            return
+    def on_connect(self):
+        self.spawn(self.listener)
 
-        if m['type'] == 'message':
-            # load the json from redis and send it to the client
-            data = loads(m['data'])
-            io.send_event("chat", data)
+    def on_chat(self, msg):
+        r = redis.Redis()
+        r.publish('chat', dumps(msg))
 
 def socketio_service(request):
-    """ The view that will launch the socketio listener """
-    r = redis.Redis()
+    retval = socketio_manage(request.environ,
+        {
+            '': ChatNamespace,
+        }, request=request
+    )
 
-    # gevent-socketio puts this into the environment
-    socketio = request.environ["socketio"]
-
-    # spawn the redis listener for the client
-    gevent.spawn(listener, socketio)
-
-    # keep trying to get messages from the websocket
-    while True:
-        message = socketio.receive()
-
-        if message:
-            if message["type"] == "event":
-                if message['name'] == "chat":
-                    # we got a new chat event from the client, send json encoded
-                    # data to redis
-                    r.publish('chat', dumps(message['args']))
-    return {}
+    return retval
