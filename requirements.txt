@@ -23,7 +23,6 @@ pystache
 colander
 pytz
 cryptacular
-
--e git+https://github.com/sontek/deform_jinja2.git#egg=deform_jinja2
--e git+https://github.com/abourget/gevent-socketio.git#egg=gevent_socketio
--e git+https://github.com/abourget/gevent-websocket.git#egg=gevent_websocket
+deform_jinja2
+gevent-socketio
+gevent-websocket
