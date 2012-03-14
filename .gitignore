@@ -3,6 +3,7 @@ jst.js
 prod.ini
 data/
 *.swo
+*~
 # web assets generated directory
 gen/
 .webassets-cache/
@@ -12,6 +13,7 @@ gen/
 # Packages
 *.egg
 *.egg-info
+env
 dist
 build
 _build
