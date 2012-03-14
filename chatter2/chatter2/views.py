@@ -1,6 +1,6 @@
 from socketio.namespace import BaseNamespace
 from socketio.mixins import BroadcastMixin
-from socketio.io import socketio_manage
+from socketio import socketio_manage
 
 def index(request):
     """ Base view to load our template """
