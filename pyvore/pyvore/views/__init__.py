@@ -5,8 +5,7 @@ from pyvore.lib import get_session
 from pyvore.models.sessions import Chat
 from pyvore.models import DBSession
 
-from pyramid_socketio.io import SocketIOContext
-from socketio.io import socketio_manage
+from socketio import socketio_manage
 
 from json import dumps
 from json import loads
