@@ -1,22 +1,21 @@
+from socketio.namespace import BaseNamespace
+from socketio.mixins import BroadcastMixin
+from socketio import socketio_manage
+
 def index(request):
     """ Base view to load our template """
     return {}
 
+class ChatNamespace(BaseNamespace, BroadcastMixin):
+    def on_chat(self, msg):
+        self.broadcast_event('chat', msg)
+
 def socketio_service(request):
-    """ The view that will launch the socketio listener """
+    retval = socketio_manage(request.environ,
+        {
+            '': ChatNamespace,
+        }, request=request
+    )
 
-    # gevent-socketio puts this into the environment
-    socketio = request.environ["socketio"]
-
-    # keep trying to get messages from the websocket
-    while True:
-        message = socketio.receive()
-
-        if message:
-            if message["type"] == "event":
-                if message['name'] == "chat":
-                    # we got a new chat event from the client, send it out to
-                    # all the clients except ourselves
-                    socketio.broadcast_event('chat', ''.join(message['args']))
-    return {}
+    return retval
 

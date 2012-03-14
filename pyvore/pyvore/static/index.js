@@ -2,10 +2,9 @@
 // Inside this function, kick-off all initialization, everything up to this
 // point should be definitions.
 jQuery(function($) {
-    Pyvore.socket = io.connect();
+    Pyvore.socket = io.connect('/chat');
 
     Pyvore.socket.on("connect", function () {
-        Pyvore.socket.emit("HI");
         // we are connected... nothing to do really
     });
 
@@ -92,11 +91,11 @@ jQuery(function($) {
         },
 
         chat: function(id) {
-            Pyvore.socket.emit("subscribe", id)
+            Pyvore.socket.emit("subscribe", {'id': id})
 
             var me = this;
             var layout = this.render_sessions();
-            
+
             var chatlog = new Sessions.Collections.Chat({}, id);
 
             var chat_view = new Sessions.Views.ChatList({

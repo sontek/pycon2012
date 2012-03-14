@@ -17,8 +17,6 @@ $(document).ready(function() {
         // send out the "chat" event with the textbox as the only argument
         socket.emit("chat", val);
 
-        $("#chatlog").append(val + "<br />");
-
         $("#chatbox").val("");
     });
 });

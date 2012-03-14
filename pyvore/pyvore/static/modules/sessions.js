@@ -67,7 +67,12 @@
             }, this);
 
             Pyvore.socket.on("chat", function (data) {
-                me.collection.add(data)
+                console.log("DATA!!!", data);
+
+                if (data.session_pk == me.collection.pk) {
+                    me.collection.add(data)
+                }
+
             });
         },
 

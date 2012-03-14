@@ -5,14 +5,14 @@ from pyvore.lib import get_session
 from pyvore.models.sessions import Chat
 from pyvore.models import DBSession
 
-from pyramid_socketio.io import SocketIOContext
-from pyramid_socketio.io import socketio_manage
+from socketio import socketio_manage
 
 from json import dumps
 from json import loads
 
+from socketio.namespace import BaseNamespace
+
 import redis
-import gevent
 
 class BaseController(object):
     @property
@@ -30,7 +30,8 @@ class BaseController(object):
 def index(request):
     return {}
 
-class ConnectIOContext(SocketIOContext):
+
+class ChatNamespace(BaseNamespace):
     def listener(self, channel):
         r = redis.StrictRedis()
         r = r.pubsub()
@@ -39,32 +40,36 @@ class ConnectIOContext(SocketIOContext):
         r.subscribe('chat:' + channel)
 
         for m in r.listen():
-            if not self.io.session.connected:
-                return
-
             if m['type'] == 'message':
                 data = loads(m['data'])
-                self.io.send_event("chat", data)
+                self.emit("chat", data)
 
-    def event_subscribe(self, channel):
-        self.spawn(self.listener, channel[0])
-
-    def event_chat(self, msg):
+    def on_chat(self, msg_id, msg):
+        """Called by client-side: chat.emit("chat", {"foo": "bar"});"""
         r = redis.Redis()
-        chat_line = msg[1]
+        chat_line = msg
 
         chat = Chat(chat_line=chat_line,
             user_pk=self.request.user.pk,
-            session_pk=int(msg[0])
+            session_pk=int(msg_id)
         )
 
         DBSession.add(chat)
         DBSession.commit()
 
         # only publish to the channel the message came from
-        r.publish('chat:' + msg[0], dumps(chat.serialize()))
+        r.publish('chat:' + msg_id, dumps(chat.serialize()))
+
+    def on_subscribe(self, channel):
+        self.spawn(self.listener, channel['id'])
+
 
 @view_config(route_name='socket_io')
 def socketio_service(request):
-    retval = socketio_manage(ConnectIOContext(request))
+    retval = socketio_manage(request.environ,
+        {
+            '/chat': ChatNamespace,
+        }, request=request
+    )
+
     return Response(retval)
