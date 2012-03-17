@@ -20,6 +20,9 @@ $(document).ready(function() {
     socket.on("disconnect", function(e) {
         console.log("Disconnected", arguments);
     });
+    chat.on("disconnect", function(e) {
+        console.log("Disconnected from chat", arguments);
+    });
     chat.on("pack", function(e) {
         console.log("got pack message", e);
     });
@@ -76,7 +79,7 @@ $(document).ready(function() {
     });
     $('#b5').click(function(){
         console.log("b5, ack stuff and callbacks")
-        chat.emit("my_callback", {'this': 'is sweet'}, function(e) {
+        chat.emit("my_callback", {'this': 'is sweet'}, function() {
             console.log("OKAY! Executed callback!!!!!", arguments);
             chat.emit("mymessage", "bob");
         });
@@ -84,6 +87,14 @@ $(document).ready(function() {
     $('#b6').click(function(){
         console.log("b6, triggering server callback")
         chat.emit("trigger_server_callback", 'superbob as param');
+        chat.send("a little message", function() {
+            console.log("GOT BACK THE SIMPLE CALLBACK!");
+        });
+    });
+    $('#b7').click(function(){
+        console.log("b7, disconnet me please")
+        //chat.emit("disconnect_me", 'superbob as param');
+        chat.disconnect();
     });
 
 

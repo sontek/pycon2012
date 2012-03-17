@@ -122,6 +122,13 @@ class ChatIONamespace(BaseNamespace, RoomsMixin):
         self.emit('callmeback', 'this is a first param',
                   'this is the last param', callback=cb2)
 
+    def recv_message(self, data):
+        print "Received a 'message' with data:", data
+        
+    def on_disconnect_me(self, data):
+        print "Disconnecting you buddy", data
+        self.disconnect()
+
 
 nsmap = {'': GlobalIONamespace,
          '/chat': ChatIONamespace}

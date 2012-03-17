@@ -23,6 +23,7 @@
     <button id="b4">Test 4</button>
     <button id="b5">Test 5</button>
     <button id="b6">Test 6</button>
+    <button id="b7">Test 7</button>
   </div>
   </body>
 </html>
