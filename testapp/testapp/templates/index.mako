@@ -21,6 +21,8 @@
     <button id="b2">Test 2</button>
     <button id="b3">Test 3</button>
     <button id="b4">Test 4</button>
+    <button id="b5">Test 5</button>
+    <button id="b6">Test 6</button>
   </div>
   </body>
 </html>
